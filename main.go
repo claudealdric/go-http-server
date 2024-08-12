@@ -6,6 +6,13 @@ import (
 )
 
 func main() {
-	server := &PlayerServer{}
+	store := &InMemoryPlayerStore{}
+	server := &PlayerServer{store}
 	log.Fatal(http.ListenAndServe(":8080", server))
+}
+
+type InMemoryPlayerStore struct{}
+
+func (i *InMemoryPlayerStore) GetPlayerScore(player string) int {
+	return 0
 }
