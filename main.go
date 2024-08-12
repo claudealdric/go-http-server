@@ -16,3 +16,6 @@ type InMemoryPlayerStore struct{}
 func (i *InMemoryPlayerStore) GetPlayerScore(player string) int {
 	return 0
 }
+
+func (i *InMemoryPlayerStore) RecordWin(player string) {
+}
