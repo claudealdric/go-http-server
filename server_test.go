@@ -55,7 +55,7 @@ func TestStoreWins(t *testing.T) {
 
 	t.Run("it records wins on POST", func(t *testing.T) {
 		player := "Pepper"
-		request, _ := http.NewRequest(http.MethodPost, "/players/"+player, nil)
+		request := newPostWinRequest(player)
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -93,6 +93,12 @@ func assertStatus(t testing.TB, got, want int) {
 func newGetScoreRequest(player string) *http.Request {
 	url := "/players/" + player
 	r, _ := http.NewRequest(http.MethodGet, url, nil)
+	return r
+}
+
+func newPostWinRequest(player string) *http.Request {
+	url := "/players/" + player
+	r, _ := http.NewRequest(http.MethodPost, url, nil)
 	return r
 }
 
