@@ -19,7 +19,9 @@ func (p *PlayerServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	player := strings.TrimPrefix(url, "/players/")
 	score := p.store.GetPlayerScore(player)
 
-	rw.WriteHeader(http.StatusNotFound)
+	if score == 0 {
+		rw.WriteHeader(http.StatusNotFound)
+	}
 
 	fmt.Fprint(rw, score)
 }
