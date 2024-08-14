@@ -44,8 +44,8 @@ func (p *PlayerServer) getLeagueTable() []Player {
 }
 
 func (p *PlayerServer) handleLeague(rw http.ResponseWriter, req *http.Request) {
+	rw.Header().Set("content-type", "application/json")
 	json.NewEncoder(rw).Encode(p.store.GetLeague())
-	rw.WriteHeader(http.StatusOK)
 }
 
 func (p *PlayerServer) handlePlayers(rw http.ResponseWriter, req *http.Request) {
