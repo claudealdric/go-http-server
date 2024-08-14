@@ -18,22 +18,25 @@ type PlayerServer struct {
 func (p *PlayerServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	router := http.NewServeMux()
 
-	router.Handle("/league", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	}))
-
-	router.Handle("/players/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		player := strings.TrimPrefix(req.URL.String(), "/players/")
-
-		switch req.Method {
-		case http.MethodPost:
-			p.processWin(rw, player)
-		case http.MethodGet:
-			p.showScore(rw, player)
-		}
-	}))
+	router.Handle("/league", http.HandlerFunc(p.handleLeague))
+	router.Handle("/players/", http.HandlerFunc(p.handlePlayers))
 
 	router.ServeHTTP(rw, req)
+}
+
+func (p *PlayerServer) handleLeague(rw http.ResponseWriter, req *http.Request) {
+	rw.WriteHeader(http.StatusOK)
+}
+
+func (p *PlayerServer) handlePlayers(rw http.ResponseWriter, req *http.Request) {
+	player := strings.TrimPrefix(req.URL.String(), "/players/")
+
+	switch req.Method {
+	case http.MethodPost:
+		p.processWin(rw, player)
+	case http.MethodGet:
+		p.showScore(rw, player)
+	}
 }
 
 func (p *PlayerServer) processWin(rw http.ResponseWriter, player string) {
