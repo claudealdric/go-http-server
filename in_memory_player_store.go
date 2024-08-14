@@ -10,6 +10,10 @@ func NewInMemoryPlayerStore() *InMemoryPlayerStore {
 	}
 }
 
+func (i *InMemoryPlayerStore) GetLeague() []Player {
+	return nil
+}
+
 func (i *InMemoryPlayerStore) GetPlayerScore(player string) int {
 	return i.store[player]
 }
