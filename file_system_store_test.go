@@ -14,7 +14,7 @@ func TestFileSystemStore(t *testing.T) {
 	defer cleanDatabase()
 
 	t.Run("league from a reader", func(t *testing.T) {
-		store := FileSystemPlayerStore{database}
+		store := NewFileSystemStore(database)
 
 		got := store.GetLeague()
 
@@ -31,20 +31,20 @@ func TestFileSystemStore(t *testing.T) {
 	})
 
 	t.Run("get player score", func(t *testing.T) {
-		store := FileSystemPlayerStore{database}
+		store := NewFileSystemStore(database)
 
 		assertScoreEquals(t, store.GetPlayerScore("Chris"), 33)
 	})
 
 	t.Run("store wins for existing players", func(t *testing.T) {
-		store := FileSystemPlayerStore{database}
+		store := NewFileSystemStore(database)
 		store.RecordWin("Chris")
 
 		assertScoreEquals(t, store.GetPlayerScore("Chris"), 34)
 	})
 
 	t.Run("store wins for new players", func(t *testing.T) {
-		store := FileSystemPlayerStore{database}
+		store := NewFileSystemStore(database)
 		player := "Pepper"
 		store.RecordWin(player)
 
