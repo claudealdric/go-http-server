@@ -16,7 +16,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("problem opening %s %v", dbFileName, err)
 	}
-	store := NewFileSystemStore(db)
+	store, err := NewFileSystemStore(db)
+
+	if err != nil {
+		log.Fatalf("problem creating file system player store, %v", err)
+	}
 
 	server := NewPlayerServer(store)
 
