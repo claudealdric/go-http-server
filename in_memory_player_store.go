@@ -10,7 +10,7 @@ func NewInMemoryPlayerStore() *InMemoryPlayerStore {
 	}
 }
 
-func (i *InMemoryPlayerStore) GetLeague() []Player {
+func (i *InMemoryPlayerStore) GetLeague() League {
 	var league []Player
 
 	for name, wins := range i.store {

@@ -12,7 +12,7 @@ const jsonContentType = "application/json"
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
-	GetLeague() []Player
+	GetLeague() League
 }
 
 type PlayerServer struct {
@@ -38,8 +38,7 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 
 	return p
 }
-
-func (p *PlayerServer) getLeagueTable() []Player {
+func (p *PlayerServer) getLeagueTable() League {
 	return []Player{
 		{"Chris", 20},
 	}
