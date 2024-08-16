@@ -1,11 +1,8 @@
 package poker
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
 )
 
@@ -26,8 +23,8 @@ func TestGetPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		assertStatus(t, response.Code, http.StatusOK)
-		assertResponseBody(t, response.Body.String(), "20")
+		AssertStatus(t, response.Code, http.StatusOK)
+		AssertResponseBody(t, response.Body.String(), "20")
 	})
 
 	t.Run("returns Floyd's score", func(t *testing.T) {
@@ -36,8 +33,8 @@ func TestGetPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		assertStatus(t, response.Code, http.StatusOK)
-		assertResponseBody(t, response.Body.String(), "10")
+		AssertStatus(t, response.Code, http.StatusOK)
+		AssertResponseBody(t, response.Body.String(), "10")
 	})
 
 	t.Run("returns 404 on missing players", func(t *testing.T) {
@@ -46,7 +43,7 @@ func TestGetPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		assertStatus(t, response.Code, http.StatusNotFound)
+		AssertStatus(t, response.Code, http.StatusNotFound)
 	})
 }
 
@@ -66,9 +63,9 @@ func TestLeague(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		got := getLeagueFromResponse(t, response.Body)
-		assertStatus(t, response.Code, http.StatusOK)
-		assertLeague(t, got, wantedLeague)
-		assertContentType(
+		AssertStatus(t, response.Code, http.StatusOK)
+		AssertLeague(t, got, wantedLeague)
+		AssertContentType(
 			t,
 			response.Result().Header.Get("content-type"),
 			jsonContentType,
@@ -91,7 +88,7 @@ func TestStoreWins(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		assertStatus(t, response.Code, http.StatusAccepted)
+		AssertStatus(t, response.Code, http.StatusAccepted)
 
 		if len(store.winCalls) != 1 {
 			t.Errorf("got %d calls to RecordWin, want %d", len(store.winCalls), 1)
@@ -105,64 +102,6 @@ func TestStoreWins(t *testing.T) {
 			)
 		}
 	})
-}
-
-func assertContentType(t *testing.T, got string, wantedContentType string) {
-	t.Helper()
-	if got != wantedContentType {
-		t.Errorf(
-			"response did not have content-type of application/json, got %v",
-			got,
-		)
-	}
-}
-
-func assertLeague(t *testing.T, got []Player, wantedLeague []Player) {
-	t.Helper()
-	if !reflect.DeepEqual(got, wantedLeague) {
-		t.Errorf("got %v, want %v", got, wantedLeague)
-	}
-}
-
-func assertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
-	t.Helper()
-
-	if len(store.winCalls) != 1 {
-		t.Fatal("expected a win call but didn't get any")
-	}
-
-	if store.winCalls[0] != winner {
-		t.Errorf("did not store correct winner. got %q, want %q", store.winCalls[0], winner)
-	}
-}
-
-func assertResponseBody(t testing.TB, got, want string) {
-	t.Helper()
-	if got != want {
-		t.Errorf("got %q, want %q", got, want)
-	}
-}
-
-func assertStatus(t testing.TB, got, want int) {
-	t.Helper()
-	if got != want {
-		t.Errorf("got %d, want %d", got, want)
-	}
-}
-
-func getLeagueFromResponse(t *testing.T, body io.Reader) (league []Player) {
-	t.Helper()
-	err := json.NewDecoder(body).Decode(&league)
-
-	if err != nil {
-		t.Fatalf(
-			"Unable to parse response from server %q into slice of Player, '%v'",
-			body,
-			err,
-		)
-	}
-
-	return
 }
 
 func newGetScoreRequest(player string) *http.Request {
@@ -180,22 +119,4 @@ func newPostWinRequest(player string) *http.Request {
 	url := "/players/" + player
 	r, _ := http.NewRequest(http.MethodPost, url, nil)
 	return r
-}
-
-type StubPlayerStore struct {
-	scores   map[string]int
-	winCalls []string
-	league   League
-}
-
-func (s *StubPlayerStore) GetLeague() League {
-	return s.league
-}
-
-func (s *StubPlayerStore) GetPlayerScore(player string) int {
-	return s.scores[player]
-}
-
-func (s *StubPlayerStore) RecordWin(player string) {
-	s.winCalls = append(s.winCalls, player)
 }
