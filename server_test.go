@@ -124,6 +124,18 @@ func assertLeague(t *testing.T, got []Player, wantedLeague []Player) {
 	}
 }
 
+func assertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
+	t.Helper()
+
+	if len(store.winCalls) != 1 {
+		t.Fatal("expected a win call but didn't get any")
+	}
+
+	if store.winCalls[0] != winner {
+		t.Errorf("did not store correct winner. got %q, want %q", store.winCalls[0], winner)
+	}
+}
+
 func assertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
